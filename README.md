@@ -1,22 +1,30 @@
-Role Name
-=========
+Traefik
+=======
 
-A brief description of the role goes here.
+Install traefik on my lab server.
+
+Trafik binary is downloaded from githu traefik repo: https://github.com/containous/traefik/releases
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+None
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+traefik_install_dir: /usr/local/bin
+traefik_version: v1.5.4
+traefik_checksum: sha256:8f7b2d3d7e893d2bc9310ecda2b8654c3a2b2b5e267b3bdf3f36b55ba21b5813
+
+traefik_status_port: ":8080"
+traefik_acme_email: gloppasglop@gmail.com
+traefik_docker_domain: gloppasglop.com
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+None
 
 Example Playbook
 ----------------
@@ -25,12 +33,14 @@ Including an example of how to use your role (for instance, with variables passe
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - role: traefik
+           traefik_version: v1.5.4
+           traefik_checksum: sha256:8f7b2d3d7e893d2bc9310ecda2b8654c3a2b2b5e267b3bdf3f36b55ba21b5813
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
