@@ -1,0 +1,72 @@
+---
+# tasks file for traefik
+
+
+- name: Check if traefik is installed
+  stat:
+    path: "{{ traefik_install_dir }}/traefik"
+  register: trafik_installed
+
+- name: Check traefik version
+  command: "{{ traefik_install_dir }}/traefik version"
+  ignore_errors: true
+  changed_when: false
+  register: traefik_result
+  when: trafik_installed.stat.exists
+  
+- set_fact:
+    traefik_installed_version: "{{ traefik_result.stdout | regex_search('^Version:\\s+(.*)','\\1') | first }}"
+  when: 
+    - trafik_installed.stat.exists
+  
+
+- name: Download traefik binary
+  get_url:
+    url: https://github.com/containous/traefik/releases/download/{{ traefik_version }}/traefik_linux-amd64
+    dest: "{{ traefik_install_dir }}/traefik"
+    owner: root
+    group: root
+    mode: 0755
+    checksum: "{{ traefik_checksum }}"
+  when: (not trafik_installed.stat.exists ) or (traefik_version != traefik_installed_version)
+  notify: restart traefik
+
+- name: Create traefik config dir
+  file:
+    path: /etc/traefik
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy traefik config file
+  template:
+    src: traefik.toml.j2
+    dest: /etc/traefik/traefik.toml
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart traefik
+
+- name: Copy systemd service file
+  template:
+    src: traefik.service.j2
+    dest: /etc/systemd/system/traefik.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart traefik
+  register: systemd_changed
+
+- name: Reload systemd
+  command: systemctl daemon-reload
+  when: systemd_changed.changed
+
+
+- name: Start traefik
+  service:
+    name: traefik
+    state: started
+    enabled: true

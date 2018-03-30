@@ -1,0 +1,56 @@
+defaultEntryPoints = ["http", "https"]
+
+[web]
+# Port for the status page
+address = "{{ traefik_status_port }}"
+
+
+[web.metrics]
+[web.statistics]
+
+# To enable Traefik to export internal metrics to Prometheus
+[web.metrics.prometheus]
+
+# Name of the related entry point
+#
+# Optional
+# Default: "traefik"
+#
+entryPoint = "traefik"
+
+# Buckets for latency metrics
+#
+# Optional
+# Default: [0.1, 0.3, 1.2, 5]
+#
+buckets = [0.1,0.3,1.2,5.0]
+
+# Entrypoints, http and https
+[entryPoints]
+  # http should be redirected to https
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    entryPoint = "https"
+  # https is the default
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+# Enable ACME (Let's Encrypt): automatic SSL
+[acme]
+# Email address used for registration
+email = "{{ traefik_acme_email }}"
+storageFile = "/etc/traefik/acme/acme.json"
+entryPoint = "https"
+onDemand = false
+OnHostRule = true
+
+# Enable Docker configuration backend
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "{{ traefik_docker_domain }}"
+watch = true
+exposedbydefault = false
+
+[accessLog]

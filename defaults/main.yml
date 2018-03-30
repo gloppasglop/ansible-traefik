@@ -1,0 +1,10 @@
+---
+# defaults file for traefik
+
+traefik_install_dir: /usr/local/bin
+traefik_version: v1.5.4
+traefik_checksum: sha256:8f7b2d3d7e893d2bc9310ecda2b8654c3a2b2b5e267b3bdf3f36b55ba21b5813
+
+traefik_status_port: ":8080"
+traefik_acme_email: gloppasglop@gmail.com
+traefik_docker_domain: gloppasglop.com
